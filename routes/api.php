@@ -37,5 +37,3 @@ Route::middleware('auth:api')->group(function(){
 	Route::post('/fcm/token','FirebaseController@postToken');
 
 });
-
-

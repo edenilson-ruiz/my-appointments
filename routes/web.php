@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Http\Resources\Json\Resource;
+
 Route::get('/', function () {
     //return view('welcome');
     return redirect('/login');
@@ -33,6 +35,11 @@ Route::middleware(['auth','admin'])->namespace('Admin')->group(function(){
 	// Doctors
 	Route::resource('doctors','DoctorController');
 
+	// Schedule Admin
+	Route::get('scheduleAdmin','ScheduleAdminController@index');
+	Route::post('scheduleAdmin','ScheduleAdminController@edit');
+	Route::post('scheduleAdminStore','ScheduleAdminController@store');
+
 	// Patients
 	Route::resource('patients','PatientController');
 
@@ -42,12 +49,12 @@ Route::middleware(['auth','admin'])->namespace('Admin')->group(function(){
 	Route::get('/charts/doctor/column/data','ChartController@doctorsJson');
 
 	// FCM
-	Route::post('/fcm/send','FirebaseController@sendAll');
+	Route::post('/fcm/send','FirebaseController@sendAll');	
 });
 
 Route::middleware(['auth','doctor'])->namespace('Doctor')->group(function(){
 	Route::get('/schedule','ScheduleController@edit');
-	Route::post('/schedule','ScheduleController@store');
+	Route::post('/schedule','ScheduleController@store');	
 });
 
 Route::middleware('auth')->group(function(){	
@@ -59,7 +66,9 @@ Route::middleware('auth')->group(function(){
 		Route::post('/appointments','AppointmentController@store');
 	});
 
-	Route::get('/appointments','AppointmentController@index');
+	Route::get('/appointments','AppointmentController@index')->name('appointments.index');
+	Route::get('/confirm','AppointmentController@getAppointmentsConfirmed')->name('appointments.confirm');
+	Route::get('/history','AppointmentController@getHistoricalAppointments')->name('appointments.history');
 	Route::get('/appointments/{appointment}','AppointmentController@show');	// <- after
 
 	Route::get('/appointments/{appointment}/cancel','AppointmentController@showCancelForm');
@@ -67,5 +76,28 @@ Route::middleware('auth')->group(function(){
 
 	// confirmar cita
 	Route::post('/appointments/{appointment}/confirm','AppointmentController@postConfirm');	
+
+	// cita atendida
+	Route::post('/appointments/attended','AppointmentController@postAttended');
+
+
+	Route::get('/patientList','AppointmentController@patientList');
+
+	// myPatients
+	Route::get('/myPatients','AppointmentController@myPatients')->name('doctor.patients');
+
+	// events
+	Route::get('events', 'EventController@index');
+	Route::post('events', 'EventController@index');
+
+	// upload CKEditor
+	Route::post('ckeditor/image_upload', 'CKEditorController@upload')->name('upload');
+
+	Route::resource('type-of-service','TypeOfServiceController');
+
+	Route::get('getTypeOfServices','TypeOfServiceController@getTypeOfServices')->name('type-of-service.getTypeOfServices');
 });
+
+
+
 

@@ -33,7 +33,10 @@ class AppointmentController extends Controller
 	    			}
 	    			,'doctor' => function($query) {
 	    				$query->select('id','name');
-	    			}
+					}
+					,'cancellation' => function($query) {
+	    				$query->select('appointment_id','justification','updated_at');
+					}
 	    		])
 	    		->get([
 		    		"id",

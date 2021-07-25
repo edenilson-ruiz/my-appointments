@@ -2,9 +2,32 @@
 
 @section('title','Mis citas')
 
+@section('styles')
+<style>
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+</style>
+@endsection
+
 @section('content')
 <div class="card shadow">
-    <div class="card-header border-0">
+    <div class="card-header">
       <div class="row align-items-center">
         <div class="col">
           <h3 class="mb-0">Cita # {{ $appointment->id }}</h3>
@@ -58,7 +81,7 @@
             <tr>
               <th>Especialidad</td>
               <td>{{ $appointment->specialty->name }}</td> 
-            </tr>                        
+            </tr>  
           </thead>
           <tbody>                        
           </tbody>
@@ -83,11 +106,20 @@
               @endif
             </ul>          
           </div>   
-        @endif
+        @endif    
+      </div>      
+    </div>
+    <div class="card shadow">
+      <div class="card-header">
+        <h3>Comentarios cita</h3>      
       </div>
-      <a href="{{ url('/appointments') }}" class="btn btn-default" >
-        Volver
-      </a>
-    </div>         
-</div>        
+      <div class="card-body">
+        <h5 class="card-title">Description:</h5>
+        <div class="card-text">
+          {!! $appointment->comment !!}
+        </div>
+        <a href="{{ url('/appointments') }}" class="btn btn-default" style="margin-top: 20px;">Volver</a>
+      </div>      
+    </div>    
+</div>    
 @endsection

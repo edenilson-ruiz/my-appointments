@@ -80,4 +80,9 @@ class Appointment extends Model
 
         return self::create($data);
     }
+
+    public function getLastDate($date)
+    {
+        return Carbon::now()->diffForHumans(($date));
+    }
 }

@@ -11,7 +11,8 @@
 
     gtag('config', 'G-P0XPSLVT73');
   </script>
-  <meta charset="utf-8">
+  <meta charset="utf-8">  
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
@@ -23,6 +24,15 @@
   <!-- Icons -->
   <link href="{{ asset('vendor/nucleo/css/nucleo.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"/>
+  <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css" rel="stylesheet">  
+  <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+   
+
 
   @yield('styles')
   <!-- Argon CSS -->
@@ -139,14 +149,29 @@
   </div>
   <!-- Argon Scripts -->
   <!-- Core -->
-  <script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
-  <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+  {{-- <script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script> --}}
+  {{-- <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script> --}}
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+  
   <!-- Optional JS -->
   <script src="{{ asset('vendor/chart.js/dist/Chart.min.js') }}"></script>
   <script src="{{ asset('vendor/chart.js/dist/Chart.extension.js') }}"></script>
   @yield('scripts')
   <!-- Argon JS -->
   <script src="{{ asset('js/argon.js?v=1.0.0') }}"></script>
+
+
+  
+
+
+  @yield('scripts')
 </body>
 
 </html>
