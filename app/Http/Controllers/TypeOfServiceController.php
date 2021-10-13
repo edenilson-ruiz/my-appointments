@@ -39,23 +39,25 @@ class TypeOfServiceController extends Controller
     {
         $name = $request->name;
 
+        //dd($name);
+
         $rules = [
-            'name' => 'required|min:5',            
+            'name' => 'required|min:5',
         ];
 
         $this->validate($request, $rules);
 
         $type_of_service = new TypeOfService();
         $type_of_service->name = $name;
-        
-        
+
+
         if($type_of_service->save()){
             $notification = 'El tipo de servicio ha sido guardado';
         } else {
             $notification = 'Hubo un error';
         }
 
-        return redirect('/type-of-service')->with(compact('notification'));
+        return response()->json(['success'=>'El servicio se adicionó correctamente']);
     }
 
     /**
@@ -105,25 +107,25 @@ class TypeOfServiceController extends Controller
 
     public function getTypeOfServices()
     {
-        $type_of_services = TypeOfService::all();      
+        $type_of_services = TypeOfService::all();
 
         // data-target="#modalNewTypeOfService";
 
-        return Datatables::of($type_of_services)             
+        return Datatables::of($type_of_services)
             ->addIndexColumn()
-            ->addColumn('action', function($row){         
-                $btn = '<a href="/type-of-service/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></i></a>'; 
-                $btn.= '<button type="button"                             
-                            class="btn btn-info btn-sm editarTipoServicio" 
-                            data-toggle="modal"     
+            ->addColumn('action', function($row){
+                $btn = '<a href="/type-of-service/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></i></a>';
+                $btn.= '<button type="button"
+                            class="btn btn-info btn-sm editarTipoServicio"
+                            data-toggle="modal"
                             data-id="'.$row->id.'"
                             data-name="'.$row->name.'"
                             title="Editar Tipo de Servicio">
                                 <i class="ni ni-collection"></i>
-                        </button>';                   
+                        </button>';
                 return $btn;
             })
-            ->rawColumns(['action'])       
-            ->make(true);     
+            ->rawColumns(['action'])
+            ->make(true);
     }
 }

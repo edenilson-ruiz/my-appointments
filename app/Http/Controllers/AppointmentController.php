@@ -18,13 +18,13 @@ use Illuminate\Http\JsonResponse;
 class AppointmentController extends Controller
 {
     private $role;
-    
+
     public function index(Request $request)
     {
         $this->role = auth()->user()->role;
 
         // admin
-        if($this->role == 'admin') 
+        if($this->role == 'admin')
         {
             $pendingAppointments = Appointment::with('doctor')
             ->with('specialty')
@@ -34,14 +34,14 @@ class AppointmentController extends Controller
             ->get();
 
         } elseif($this->role == 'doctor') { //doctor
-            
+
             $pendingAppointments = Appointment::with('doctor')
                 ->with('specialty')
                 ->with('cancellation')
                 ->with('patient')
                 ->where('status','Reservada')
                 ->where('doctor_id', auth()->id())
-                ->get();            
+                ->get();
 
         } elseif ($this->role == 'patient') {
             // patient
@@ -52,9 +52,9 @@ class AppointmentController extends Controller
                 ->where('status','Reservada')
                 ->where('patient_id', auth()->id())
                 ->get();
-                //->paginate(10);            
+                //->paginate(10);
         }
-        
+
         /*
         $query = $pendingAppointments
 
@@ -63,7 +63,7 @@ class AppointmentController extends Controller
                 'role' => $this->role
             ])
             ->addIndexColumn()
-            ->addColumn('action', function($row){                   
+            ->addColumn('action', function($row){
 
                     $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">'. $row->id .'</a>';
 
@@ -75,8 +75,8 @@ class AppointmentController extends Controller
             */
         //return $response;
 
-       
-        
+
+
         if ($request->ajax()) {
 
             $query = $pendingAppointments;
@@ -86,9 +86,9 @@ class AppointmentController extends Controller
                     'role' => $this->role
                 ])
                 ->addIndexColumn()
-                ->addColumn('action', function($row){         
-                        
-                        if($this->role == 'admin' || $this->role == 'doctor') {                            
+                ->addColumn('action', function($row){
+
+                        if($this->role == 'admin' || $this->role == 'doctor') {
                             $btn = '<a href="/appointments/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></i></a>';
                             $btn.= '<form action="/appointments/'.$row->id.'/confirm" method="POST" class="d-inline-block"> '.csrf_field().'
                                         <button type="submit" class="btn btn-sm btn-success" data-toggle="tooltip" title="Confirmar cita">
@@ -99,24 +99,24 @@ class AppointmentController extends Controller
                                         <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Cancelar cita">
                                             <i class="ni ni-fat-delete"></i>
                                         </button>
-                                    </form> ';    
+                                    </form> ';
                         } else {
                             $btn = '<a href="/appointments/'.$row->id.'" class="edit btn btn-primary btn-sm">Ver</a>';
                             $btn .= '<form action="/appointments/'.$row->id.'/cancel" method="POST" class="d-inline-block"> '.csrf_field().'
                                         <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Cancelar cita">
                                             <i class="ni ni-fat-delete"></i>
                                         </button>
-                                    </form> ';                
+                                    </form> ';
                         }
-                      
+
                         return $btn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
 
-        }    
-        
-                
+        }
+
+
         /*
         return view('appointments.index',
             compact('pendingAppointments',
@@ -126,12 +126,12 @@ class AppointmentController extends Controller
             )
         );*/
 
-        
+
         $role = $this->role;
 
         //dd($items);
-        return view('appointments.index', compact('items','role','pendingAppointments','confirmedAppointments','oldAppointments'));
-        //return view('appointments.index', compact('role'));
+        //return view('appointments.index', compact('items','role','pendingAppointments','confirmedAppointments','oldAppointments'));
+        return view('appointments.index', compact('role'));
     }
 
     public function getAppointmentsConfirmed(Request $request)
@@ -139,18 +139,18 @@ class AppointmentController extends Controller
         $this->role = auth()->user()->role;
 
         // admin
-        if($this->role == 'admin') 
+        if($this->role == 'admin')
         {
             $confirmedAppointments = Appointment::with('doctor')
                 ->with('specialty')
                 ->with('cancellation')
                 ->with('patient')
                 ->where('status','Confirmada')
-                ->get();           
+                ->get();
 
 
         } elseif($this->role == 'doctor') { //doctor
-                 
+
 
             $confirmedAppointments = Appointment::with('doctor')
                 ->with('specialty')
@@ -158,11 +158,11 @@ class AppointmentController extends Controller
                 ->with('patient')
                 ->where('status','Confirmada')
                 ->where('doctor_id', auth()->id())
-                ->get();                
-       
+                ->get();
+
 
         } elseif ($this->role == 'patient') {
-                           
+
             $confirmedAppointments = Appointment::with('doctor')
                 ->with('specialty')
                 ->with('cancellation')
@@ -170,10 +170,10 @@ class AppointmentController extends Controller
                 ->where('status','Confirmada')
                 ->where('patient_id', auth()->id())
                 ->get();
-                
+
         }
-       
-        
+
+
         if ($request->ajax()) {
 
             $query = $confirmedAppointments;
@@ -184,9 +184,9 @@ class AppointmentController extends Controller
                     'role' => $this->role
                 ])
                 ->addIndexColumn()
-                ->addColumn('action', function($row){         
-                        
-                        if($this->role == 'admin' || $this->role == 'doctor') {                            
+                ->addColumn('action', function($row){
+
+                        if($this->role == 'admin' || $this->role == 'doctor') {
                             $btn = '<a href="/appointments/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></i></a>';
                             /*$btn.= '<form action="/appointments/'.$row->id.'/attended" method="POST" class="d-inline-block"> '.csrf_field().'
                                         <button type="submit" class="btn btn-sm btn-success" data-toggle="tooltip" title="Cita atendida">
@@ -200,13 +200,13 @@ class AppointmentController extends Controller
                         } else {
                             $btn = '<a href="/appointments/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></a>';
                         }
-                      
+
                         return $btn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
 
-        }    
+        }
     }
 
     public function getHistoricalAppointments(Request $request)
@@ -214,7 +214,7 @@ class AppointmentController extends Controller
         $this->role = auth()->user()->role;
 
         // admin
-        if($this->role == 'admin') 
+        if($this->role == 'admin')
         {
            $oldAppointments = Appointment::with('doctor')
                 ->with('specialty')
@@ -222,7 +222,7 @@ class AppointmentController extends Controller
                 ->with('patient')
                 ->whereIn('status',['Atendida','Cancelada'])
                 ->get();
-            
+
 
         } elseif($this->role == 'doctor') { //doctor
             $oldAppointments = Appointment::with('doctor')
@@ -231,7 +231,7 @@ class AppointmentController extends Controller
                 ->with('patient')
                 ->whereIn('status',['Atendida','Cancelada'])
                 ->where('doctor_id', auth()->id())
-                ->get();                
+                ->get();
 
         } elseif ($this->role == 'patient') {
             $oldAppointments = Appointment::with('doctor')
@@ -241,10 +241,10 @@ class AppointmentController extends Controller
                 ->whereIn('status',['Atendida','Cancelada'])
                 ->where('patient_id', auth()->id())
                 ->get();
-                
+
         }
-       
-        
+
+
         if ($request->ajax()) {
 
             $query = $oldAppointments;
@@ -254,8 +254,8 @@ class AppointmentController extends Controller
                     'role' => $this->role
                 ])
                 ->addIndexColumn()
-                ->addColumn('action', function($row){         
-                    $btn = '<a href="/appointments/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></a>';                    
+                ->addColumn('action', function($row){
+                    $btn = '<a href="/appointments/'.$row->id.'" class="edit btn btn-primary btn-sm" title="Ver cita"><i class="ni ni-zoom-split-in"></a>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -284,7 +284,7 @@ class AppointmentController extends Controller
             $doctors = collect();
         }
 
-        
+
         $date = old('scheduled_date');
         $doctorId = old('doctor_id');
         if($date && $doctorId) {
@@ -292,8 +292,8 @@ class AppointmentController extends Controller
         } else {
             $intervals = null;
         }
-        
-        
+
+
         //dd($doctors);
     	return view('appointments.create', compact('specialties','doctors','intervals'));
     }
@@ -306,7 +306,7 @@ class AppointmentController extends Controller
             $notification = "La cita se ha registrado correctamente";
         } else {
             $notification = "Ocurrió un problema al registrar la cita médica";
-        }    	
+        }
 
     	return redirect('/appointments')->with(compact('notification'));
     }
@@ -330,12 +330,12 @@ class AppointmentController extends Controller
             // $cancellation->save();
             $appointment->cancellation()->save($cancellation);
         }
-        
+
         $appointment->status = 'Cancelada';
         $saved = $appointment->save(); // update
         if ($saved)
             $appointment->patient->sendFCM('Su cita ha sido cancelada.');
-        
+
         $notification = 'La cita se ha cancelado correctamente.';
         return redirect('/appointments')->with(compact('notification'));
     }
@@ -345,7 +345,7 @@ class AppointmentController extends Controller
         $appointment->status = 'Confirmada';
         $saved = $appointment->save();
 
-        if ($saved)       
+        if ($saved)
             $appointment->patient->sendFCM('Su cita se ha confirmado');
 
         $notification = "La cita se ha confirmada correctamente";
@@ -368,20 +368,20 @@ class AppointmentController extends Controller
         $this->validate($request, $rules);
 
         $appointment = Appointment::findOrFail($appointment_id);
-        
+
         $appointment->status = 'Atendida';
         $appointment->amount = $amount;
         $appointment->comment = $comment;
         $saved = $appointment->save();
 
-        if ($saved)       
+        if ($saved)
             $appointment->patient->sendFCM('Su cita ha sido atendida');
 
         $notification = "La cita ha sido atendida correctamente";
 
         return redirect('/appointments')->with(compact('notification'));
     }
-    
+
     public function patientList()
     {
         return view('doctors.patients');
@@ -403,14 +403,14 @@ class AppointmentController extends Controller
         return Datatables::of($query)
             ->with([
                 'role' => $this->role
-            ])            
+            ])
             ->addIndexColumn()
             ->editColumn('last_date', function($row){
                 // Carbon::setLocale('es');
                 $dateActual = Carbon::createFromDate($row->last_date);
                 $now = Carbon::now();
                 return $dateActual->diffForHumans();
-            })            
-            ->make(true);       
+            })
+            ->make(true);
     }
 }

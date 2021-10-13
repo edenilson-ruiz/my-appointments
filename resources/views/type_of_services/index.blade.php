@@ -8,17 +8,17 @@
       <div class="row align-items-center">
         <div class="col">
           <h3 class="mb-0">Tipos de Servicio</h3>
-        </div>       
+        </div>
       </div>
     </div>
     <div class="card-body">
       @if(session('notification'))
       <div class="alert alert-success" role="alert">
-        {{ session('notification') }} 
-        <div id="notification"></div>       
+        {{ session('notification') }}
+        <div id="notification"></div>
       </div>
       @endif
-      @if($errors->any())        
+      @if($errors->any())
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <ul>
             @foreach ($errors->all() as $error)
@@ -29,34 +29,34 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      @endif     
+      @endif
       <div class="card shadow">
             <div class="card-header">
-                <button type="button" 
+                <button type="button"
                     id="btnNuevoTipoServicio"
-                    class="btn btn-primary" 
-                    data-toggle="modal"                    
+                    class="btn btn-primary"
+                    data-toggle="modal"
                     title="Nuevo Tipo de Servicio">
                     Nuevo Tipo de Servicio
                 </button>
             </div>
-            <div class="card-body">            
+            <div class="card-body">
                 <div class="table-responsive">
                     <!-- Projects table -->
                     <table id="dtTypeOfServices" class="table align-items-center table-flush data-table">
                         <thead>
                         <tr>
-                            <th scope="col">Nombre </th>                        
+                            <th scope="col">Nombre </th>
                             <th scope="col">Accion</th>
                         </tr>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
-                </div>            
+                </div>
             </div>
       </div>
-    </div>      
+    </div>
 </div>
 <!-- Modal -->
 <div class="modal fade" id="modalNewTypeOfService" tabindex="-1" role="dialog" aria-labelledby="modalLabelTypeOfService" aria-hidden="true">
@@ -68,18 +68,17 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form method="POST" class="d-inline-block">
-          @csrf
-          <div class="modal-body">                 
-            <div class="form-group">      
-              <input type="hidden" name="id" id="id" />  
+        <form class="d-inline-block">
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="hidden" name="id" id="id" />
               <label for="name">Nombre del servicio</label>
               <input type="text" class="form-control" name="name" id="name" required/>
-            </div>                         
+            </div>
           </div>
             <div class="modal-footer">
-              <button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
-              <button type="submit" id="btnActualizar" class="btn btn-primary" style="display: none;">Actualizar</button>
+              <button id="btnGuardar" class="btn btn-primary">Guardar</button>
+              <button id="btnActualizar" class="btn btn-primary" style="display: none;">Actualizar</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           </div>
         </form>
@@ -89,6 +88,7 @@
 @endsection
 @section('scripts')
 <script type="text/javascript">
+
     $(function(){
 
         if ( $.fn.dataTable.isDataTable( '#dtTypeOfServices' ) ) {
@@ -101,40 +101,47 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('type-of-service.getTypeOfServices') }}",
-                paging: true,              
+                paging: true,
                 buttons: [
                     'csv', 'excel', 'pdf', 'print', 'reset', 'reload'
-                ],  
-                columns: [                            
+                ],
+                columns: [
                     {data: 'name', name: 'name'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             } );
         }
+    });
 
-        $('#btnNuevoTipoServicio').click(function(){
-            $('#modalNewTypeOfService').modal();
-        });
+    $(document).ready(function(){
 
-       $('#btnGuardar').click(function() {
+        $('#btnGuardar').click(function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
             name = $('#name').val();
 
             $.ajax({
                 url: "{{ route('type-of-service.store') }}",
-                type: 'POST',              
+                type: 'POST',
                 data: {
                     "_token": "{{ csrf_token() }}",
                     name: name
-                }, 
-                success: function(response)
-                {
-                    $('#notification').html(response);
-                }
+                },
+                success:function(response){
+                    console.log(response);
+                    if(response) {
+                        $('.success').text(response.success);
+                        $('#modalNewTypeOfService').modal('hide');
+                        table.draw();
+                    }
+                },
             });
-       });       
-    });  
+        });
 
-    $(document).ready(function(){
+        $('#btnNuevoTipoServicio').click(function(){
+            $('#modalNewTypeOfService').modal('show');
+        });
+
         $('.editarTipoServicio').click(function(){
             /* $('#btnGuardar').css('display','none');
             $('#btnActualizar').css('display','block');
@@ -142,15 +149,19 @@
             alert("Texto");
         });
 
+
+        $(document).on('shown.bs.modal', '#modalNewTypeOfService', function(){
+            $('#name').focus();
+        });
          //triggered when modal is about to be shown
-        $('#modalNewTypeOfService').on('show.bs.modal', function(e) {            
+        $('#modalNewTypeOfService').on('show.bs.modal', function(e) {
             //get data-id attribute of the clicked element
             var id = $(e.relatedTarget).data('id');
             var name = $(e.relatedTarget).data('name');
             //populate the textbox
             $(e.currentTarget).find('input[name="id"]').val(id);
-            $(e.currentTarget).find('input[name="name"]').val(name);            
-        });  
+            $(e.currentTarget).find('input[name="name"]').val(name);
+        });
     });
 </script>
 @endsection
